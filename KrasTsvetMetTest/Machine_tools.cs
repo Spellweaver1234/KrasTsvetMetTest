@@ -10,8 +10,8 @@ namespace KrasTsvetMetTest
     {
         public string id { get; set; }
         public string name { get; set; }
-        public bool isBusy { get; set; }
         public int time { get; set; }
+        public int timeStop { get; set; }
 
         public Machine_tools(string id, string name)
         {

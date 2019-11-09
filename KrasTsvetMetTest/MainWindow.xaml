@@ -14,5 +14,26 @@
         <DataGrid x:Name="dataGrid" Margin="10,41,10,46"/>
         <Button x:Name="but_Save" Content="Сохранить расписание" Margin="10,0,10,10" Height="31" VerticalAlignment="Bottom" Click="but_Save_Click"/>
         <Label x:Name="label" Content="Расписание" Margin="10,10,10,0" VerticalAlignment="Top"/>
+        <StackPanel Grid.Column="1" HorizontalAlignment="Left" Height="156" Margin="10,51,0,0" VerticalAlignment="Top" Width="168">
+            <Label x:Name="lab_info" Content="Время работы:"/>
+            <Grid Height="110">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <Label x:Name="label1" Content="Машина №1" VerticalAlignment="Top"/>
+                    <Label x:Name="label2" Content="Машина №2" VerticalAlignment="Top"/>
+                    <Label x:Name="label3" Content="Машина №3" VerticalAlignment="Top"/>
+                    <Label x:Name="label4" Content="Общее " VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <Label x:Name="lab_m1" Content="0"/>
+                    <Label x:Name="lab_m2" Content="0"/>
+                    <Label x:Name="lab_m3" Content="0"/>
+                    <Label x:Name="lab_total" Content="0"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Window>

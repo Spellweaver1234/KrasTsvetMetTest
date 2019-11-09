@@ -17,6 +17,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using ClosedXML;
 using ClosedXML.Excel;
 using Syncfusion.XlsIO;
+using WinForms = System.Windows.Forms;
 
 namespace KrasTsvetMetTest
 {
@@ -27,43 +28,84 @@ namespace KrasTsvetMetTest
         List<Nomenclatures> nomenclatures;
         List<Parties> parties;
         List<Raspisanie> raspisanie;
+        string folderPath;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var tData = ExcelParse(@"C:\Users\Арсений\Downloads\Красцветмет\Тестовое задание\Тестовое задание\times.xlsx");
-            var mData = ExcelParse(@"C:\Users\Арсений\Downloads\Красцветмет\Тестовое задание\Тестовое задание\machine_tools.xlsx");
-            var nData = ExcelParse(@"C:\Users\Арсений\Downloads\Красцветмет\Тестовое задание\Тестовое задание\nomenclatures.xlsx");
-            var pData = ExcelParse(@"C:\Users\Арсений\Downloads\Красцветмет\Тестовое задание\Тестовое задание\parties.xlsx");
+            MessageBox.Show("Пожалуйста, выберите папку в которой находятся следующие файлы: " +
+                "\n\n times.xlsx" +
+                "\n machine_tools.xlsx" +
+                "\n nomenclatures.xlsx" +
+                "\n parties.xlsx",
+                "Начало работы", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
 
-            times = Times.TParse(tData);
-            machine_Tools = Machine_tools.MParse(mData);
-            nomenclatures = Nomenclatures.NParse(nData);
-            parties = Parties.PParse(pData);
-            raspisanie = new List<Raspisanie>();
-
-            // партия -> номенклатура -> машина -> расчет -> вывод
-            while (parties.Count > 0)
+            WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog();
+            if (fbd.ShowDialog() == WinForms.DialogResult.OK)
             {
-                // берём следующую партию и возвращаем оставшиеся
-                Parties current_party = GetParties(parties, out var newParties);
+                folderPath = fbd.SelectedPath.ToString();
 
-                // определяем номенклатуру
-                Nomenclatures current_nomenclature = GetNomenclature(current_party, nomenclatures);
-
-                // выбираем для номенклатуры машину
-                Machine_tools current_machine = GetMachine(current_nomenclature, machine_Tools, times);
-
-                string partyName = current_nomenclature.nomenclature;
-                string equipmentName = current_machine.name;
-                string tStart = current_machine.time.ToString();
-                string tStop = СalculationTime(current_machine, current_nomenclature, times);
-
-                raspisanie.Add(new Raspisanie(partyName, equipmentName, tStart, tStop));
+                MessageBox.Show("Ожидайте завершения анализа файлов");
+                MainProcess();
+            }
+            else
+            {
+                Application.Current.Shutdown();
             }
 
-            dataGrid.ItemsSource = raspisanie;
+
+        }
+
+        private void MainProcess()
+        {
+            string[,] tData = null;
+            string[,] mData = null;
+            string[,] nData = null;
+            string[,] pData = null;
+
+            try
+            {
+                tData = ExcelParse(folderPath + "\\" + "times.xlsx");
+                mData = ExcelParse(folderPath + "\\" + "machine_tools.xlsx");
+                nData = ExcelParse(folderPath + "\\" + "nomenclatures.xlsx");
+                pData = ExcelParse(folderPath + "\\" + "parties.xlsx");
+
+                times = Times.TParse(tData);
+                machine_Tools = Machine_tools.MParse(mData);
+                nomenclatures = Nomenclatures.NParse(nData);
+                parties = Parties.PParse(pData);
+                raspisanie = new List<Raspisanie>();
+
+                // партия -> номенклатура -> машина -> вычисление -> расписание
+                while (parties.Count > 0)
+                {
+                    // берём следующую партию и возвращаем оставшиеся
+                    Parties current_party = GetParties(parties, out var newParties);
+
+                    // определяем номенклатуру
+                    Nomenclatures current_nomenclature = GetNomenclature(current_party, nomenclatures);
+
+                    // выбираем для номенклатуры машину
+                    Machine_tools current_machine = GetMachine(current_nomenclature, machine_Tools, times);
+
+                    string partyName = current_nomenclature.nomenclature;
+                    string equipmentName = current_machine.name;
+                    string tStart = current_machine.time.ToString();
+                    string tStop = СalculationTime(current_machine, current_nomenclature, times);
+
+                    raspisanie.Add(new Raspisanie(partyName, equipmentName, tStart, tStop));
+                }
+
+                dataGrid.ItemsSource = raspisanie;
+                ShowStats(machine_Tools);
+            }
+            catch
+            {
+                MessageBox.Show("В папке не найдены нужные файлы", "Ошибка чтения файлов");
+                Application.Current.Shutdown();
+            }
         }
 
         // все данные из Эксель
@@ -176,10 +218,8 @@ namespace KrasTsvetMetTest
                         // совпадение по ид
                         if (machine_Tools[k].id == machine.id)
                         {
-                            int tStop = int.Parse(times[i].operation_time);
-                            machine.time += tStop;
-                            tStop = machine.time;
-                            return tStop.ToString();
+                            machine.time += int.Parse(times[i].operation_time);
+                            return machine.time.ToString();
                         }
                     }
                     break;
@@ -188,11 +228,21 @@ namespace KrasTsvetMetTest
             return null;
         }
 
+        private void ShowStats(List<Machine_tools> machine_Tools)
+        {
+            lab_m1.Content = machine_Tools[0].time;
+            lab_m2.Content = machine_Tools[1].time;
+            lab_m3.Content = machine_Tools[2].time;
+            lab_total.Content = machine_Tools[0].time + machine_Tools[1].time + machine_Tools[2].time;
+        }
+
         private void ExportToExcel()
         {
+            try
+            {
             var workbook = new XLWorkbook();
-            workbook.AddWorksheet("sheetName");
-            var ws = workbook.Worksheet("sheetName");
+            workbook.AddWorksheet("Расписание");
+            var ws = workbook.Worksheet("Расписание");
             int row = 1;
             foreach (var c in raspisanie)
             {
@@ -204,9 +254,16 @@ namespace KrasTsvetMetTest
 
             }
 
-            string fileName = @"C:\Users\Арсений\Downloads\Красцветмет\Тестовое задание\Тестовое задание\Raspisanie.xlsx";
+            string fileName = folderPath + "\\" + "Raspisanie.xlsx";
             workbook.SaveAs(fileName);
-
+                MessageBox.Show("Файл успешно сохранён в папке с исходными файлами" +
+                    "\n " + fileName
+                    , "Результат");
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось сохранить файл");
+            }
         }
 
         private void but_Save_Click(object sender, RoutedEventArgs e)
