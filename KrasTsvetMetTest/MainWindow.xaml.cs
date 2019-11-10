@@ -47,7 +47,8 @@ namespace KrasTsvetMetTest
             {
                 folderPath = fbd.SelectedPath.ToString();
 
-                MessageBox.Show("Ожидайте завершения анализа файлов");
+                MessageBox.Show("Ожидайте завершения анализа файлов", "Информация", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 MainProcess();
             }
             else
@@ -103,7 +104,8 @@ namespace KrasTsvetMetTest
             }
             catch
             {
-                MessageBox.Show("В папке не найдены нужные файлы", "Ошибка чтения файлов");
+                MessageBox.Show("В папке не найдены нужные файлы", "Ошибка", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
         }
@@ -257,12 +259,13 @@ namespace KrasTsvetMetTest
             string fileName = folderPath + "\\" + "Raspisanie.xlsx";
             workbook.SaveAs(fileName);
                 MessageBox.Show("Файл успешно сохранён в папке с исходными файлами" +
-                    "\n " + fileName
-                    , "Результат");
+                    "\n " + fileName, "Информация", 
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch
             {
-                MessageBox.Show("Не удалось сохранить файл");
+                MessageBox.Show("Не удалось сохранить файл", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
