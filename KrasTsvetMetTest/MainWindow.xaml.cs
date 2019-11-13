@@ -18,6 +18,7 @@ using ClosedXML;
 using ClosedXML.Excel;
 using Syncfusion.XlsIO;
 using WinForms = System.Windows.Forms;
+using System.Windows.Controls.DataVisualization.Charting;
 
 namespace KrasTsvetMetTest
 {
@@ -39,7 +40,7 @@ namespace KrasTsvetMetTest
                 "\n machine_tools.xlsx" +
                 "\n nomenclatures.xlsx" +
                 "\n parties.xlsx",
-                "Начало работы", 
+                "Начало работы",
                 MessageBoxButton.OK, MessageBoxImage.Information);
 
             WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog();
@@ -47,7 +48,7 @@ namespace KrasTsvetMetTest
             {
                 folderPath = fbd.SelectedPath.ToString();
 
-                MessageBox.Show("Ожидайте завершения анализа файлов", "Информация", 
+                MessageBox.Show("Ожидайте завершения анализа файлов", "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 MainProcess();
             }
@@ -101,10 +102,11 @@ namespace KrasTsvetMetTest
 
                 dataGrid.ItemsSource = raspisanie;
                 ShowStats(machine_Tools);
+                LoadBarChartData(machine_Tools);
             }
             catch
             {
-                MessageBox.Show("В папке не найдены нужные файлы", "Ошибка", 
+                MessageBox.Show("В папке не найдены нужные файлы", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 Application.Current.Shutdown();
             }
@@ -186,7 +188,7 @@ namespace KrasTsvetMetTest
             foreach (var item in posMachines)
             {
                 Machine_tools buff = null;
-                foreach(var o in machine_Tools)
+                foreach (var o in machine_Tools)
                 {
                     if (o.id == item)
                     {
@@ -242,24 +244,24 @@ namespace KrasTsvetMetTest
         {
             try
             {
-            var workbook = new XLWorkbook();
-            workbook.AddWorksheet("Расписание");
-            var ws = workbook.Worksheet("Расписание");
-            int row = 1;
-            foreach (var c in raspisanie)
-            {
-                ws.Cell("A" + row.ToString()).Value = c.party;
-                ws.Cell("B" + row.ToString()).Value = c.equipment;
-                ws.Cell("C" + row.ToString()).Value = c.tStart;
-                ws.Cell("D" + row.ToString()).Value = c.tStop;
-                row++;
+                var workbook = new XLWorkbook();
+                workbook.AddWorksheet("Расписание");
+                var ws = workbook.Worksheet("Расписание");
+                int row = 1;
+                foreach (var c in raspisanie)
+                {
+                    ws.Cell("A" + row.ToString()).Value = c.party;
+                    ws.Cell("B" + row.ToString()).Value = c.equipment;
+                    ws.Cell("C" + row.ToString()).Value = c.tStart;
+                    ws.Cell("D" + row.ToString()).Value = c.tStop;
+                    row++;
 
-            }
+                }
 
-            string fileName = folderPath + "\\" + "Raspisanie.xlsx";
-            workbook.SaveAs(fileName);
+                string fileName = folderPath + "\\" + "Raspisanie.xlsx";
+                workbook.SaveAs(fileName);
                 MessageBox.Show("Файл успешно сохранён в папке с исходными файлами" +
-                    "\n " + fileName, "Информация", 
+                    "\n " + fileName, "Информация",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch
@@ -267,6 +269,15 @@ namespace KrasTsvetMetTest
                 MessageBox.Show("Не удалось сохранить файл", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void LoadBarChartData(List<Machine_tools> machine_Tools)
+        {
+            ((PieSeries)mcChart.Series[0]).ItemsSource =
+                new KeyValuePair<string, int>[] {
+                new KeyValuePair<string,int>("Печь 1", machine_Tools[0].time),
+                new KeyValuePair<string,int>("Печь 2", machine_Tools[1].time),
+                new KeyValuePair<string,int>("Печь 3", machine_Tools[2].time)};
         }
 
         private void but_Save_Click(object sender, RoutedEventArgs e)

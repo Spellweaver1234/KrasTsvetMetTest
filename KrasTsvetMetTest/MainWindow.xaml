@@ -3,18 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"  
+        xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"  
         xmlns:local="clr-namespace:KrasTsvetMetTest"
         mc:Ignorable="d"
         Title="КрасЦветМет" Height="380" Width="534" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <DataGrid x:Name="dataGrid" Margin="10,41,10,46"/>
         <Button x:Name="but_Save" Content="Сохранить расписание" Margin="10,0,10,10" Height="31" VerticalAlignment="Bottom" Click="but_Save_Click"/>
         <Label x:Name="label" Content="Расписание" Margin="10,10,10,0" VerticalAlignment="Top"/>
-        <StackPanel Grid.Column="1" HorizontalAlignment="Left" Height="156" Margin="10,51,0,0" VerticalAlignment="Top" Width="168">
+
+        <StackPanel Grid.Column="1" Height="156" Margin="10,10,10,0" VerticalAlignment="Top">
             <Label x:Name="lab_info" Content="Время работы:"/>
             <Grid Height="110">
                 <Grid.ColumnDefinitions>
@@ -35,5 +38,13 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
+        <DVC:Chart Name="mcChart" Background="YellowGreen" Margin="10,171,10,10" Grid.Column="1">
+            <DVC:Chart.Series>
+                <DVC:PieSeries Title="Время работы" 
+                    IndependentValueBinding="{Binding Path=Key}"  
+                    DependentValueBinding="{Binding Path=Value}">
+                </DVC:PieSeries>
+            </DVC:Chart.Series>
+        </DVC:Chart>
     </Grid>
 </Window>
