@@ -112,28 +112,25 @@ namespace KrasTsvetMetTest
             }
         }
 
-        // все данные из Эксель
         private string[,] ExcelParse(string path)
         {
-            Excel.Application application = new Excel.Application();
-            Excel.Workbook workbook = application.Workbooks.Open(path, Type.Missing, Type.Missing,
-                Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            Excel.Worksheet worksheet = (Excel.Worksheet)application.Sheets[1];
-            var lastCell = worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);
-            int lastColumn = lastCell.Column;
-            int lastRow = lastCell.Row;
-            string[,] buff = new string[lastRow, lastColumn];
-
-            for (int i = 0; i < lastCell.Row; i++)                             // по всем колонкам
+            XLWorkbook workbook = new XLWorkbook(path);
+            IXLWorksheet worksheet = workbook.Worksheet(1);
+            int rc = worksheet.RangeUsed().RowCount();
+            int cc = worksheet.RangeUsed().Row(1).CellCount();
+            string[,] buff = new string[rc, cc];
+            for (int i = 0; i < rc; i++)
             {
-                for (int j = 0; j < lastCell.Column; j++)                            // по всем строкам
+                IXLRow row = worksheet.Row(i+1);
+                for (int j = 0; j < cc; j++)
                 {
-                    buff[i, j] = application.Cells[i + 1, j + 1].Text.ToString();    // считываем текст в строку
+                    IXLCell cell = row.Cell(j+1);
+                    string value = cell.GetValue<string>();
+                    buff[i, j] = value;
                 }
             }
-            workbook.Close(false, Type.Missing, Type.Missing);
-            application.Quit();
+            //object value1 = cell.Value;
+            // or
             return buff;
         }
 
