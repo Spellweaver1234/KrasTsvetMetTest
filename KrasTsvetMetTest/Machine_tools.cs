@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace KrasTsvetMetTest
 {
@@ -20,9 +16,9 @@ namespace KrasTsvetMetTest
             this.time = 0;
         }
 
-        public static List<Machine_tools> MParse(string[,] machine_Tools)
+        public static ObservableCollection<Machine_tools> MParse(string[,] machine_Tools)
         {
-            var buff = new List<Machine_tools>();
+            var buff = new ObservableCollection<Machine_tools>();
             for (int i = 1; i < machine_Tools.GetLength(0); i++)
             {
                 string id, name;

@@ -1,24 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Excel = Microsoft.Office.Interop.Excel;
-using ClosedXML;
-using ClosedXML.Excel;
-using Syncfusion.XlsIO;
-using WinForms = System.Windows.Forms;
 using System.Windows.Controls.DataVisualization.Charting;
+//using ClosedXML.Excel;
+using WinForms = System.Windows.Forms;
 
 namespace KrasTsvetMetTest
 {
@@ -34,30 +18,29 @@ namespace KrasTsvetMetTest
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new ApplicationViewModel(new DefaultDialogService(), new ExcelFileService());
 
-            MessageBox.Show("Пожалуйста, выберите папку в которой находятся следующие файлы: " +
-                "\n\n times.xlsx" +
-                "\n machine_tools.xlsx" +
-                "\n nomenclatures.xlsx" +
-                "\n parties.xlsx",
-                "Начало работы",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show("Пожалуйста, выберите папку в которой находятся следующие файлы: " +
+            //    "\n\n times.xlsx" +
+            //    "\n machine_tools.xlsx" +
+            //    "\n nomenclatures.xlsx" +
+            //    "\n parties.xlsx",
+            //    "Начало работы",
+            //    MessageBoxButton.OK, MessageBoxImage.Information);
 
-            WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog();
-            if (fbd.ShowDialog() == WinForms.DialogResult.OK)
-            {
-                folderPath = fbd.SelectedPath.ToString();
+            //WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog();
+            //if (fbd.ShowDialog() == WinForms.DialogResult.OK)
+            //{
+            //    folderPath = fbd.SelectedPath.ToString();
 
-                MessageBox.Show("Ожидайте завершения анализа файлов", "Информация",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                MainProcess();
-            }
-            else
-            {
-                Application.Current.Shutdown();
-            }
-
-
+            //    MessageBox.Show("Ожидайте завершения анализа файлов", "Информация",
+            //        MessageBoxButton.OK, MessageBoxImage.Information);
+            //    MainProcess();
+            //}
+            //else
+            //{
+            //    Application.Current.Shutdown();
+            //}
         }
 
         private void MainProcess()
@@ -74,10 +57,10 @@ namespace KrasTsvetMetTest
                 nData = ExcelParse(folderPath + "\\" + "nomenclatures.xlsx");
                 pData = ExcelParse(folderPath + "\\" + "parties.xlsx");
 
-                times = Times.TParse(tData);
-                machine_Tools = Machine_tools.MParse(mData);
-                nomenclatures = Nomenclatures.NParse(nData);
-                parties = Parties.PParse(pData);
+                //times = Times.TParse(tData);
+                //machine_Tools = Machine_tools.MParse(mData);
+                //nomenclatures = Nomenclatures.NParse(nData);
+                //parties = Parties.PParse(pData);
                 raspisanie = new List<Raspisanie>();
 
                 // партия -> номенклатура -> машина -> вычисление -> расписание
@@ -97,7 +80,7 @@ namespace KrasTsvetMetTest
                     string tStart = current_machine.time.ToString();
                     string tStop = СalculationTime(current_machine, current_nomenclature, times);
 
-                    raspisanie.Add(new Raspisanie(partyName, equipmentName, tStart, tStop));
+                    //raspisanie.Add(new Raspisanie ( partyName, equipmentName,  tStart,  tStop ));
                 }
 
                 dataGrid.ItemsSource = raspisanie;
@@ -114,24 +97,25 @@ namespace KrasTsvetMetTest
 
         private string[,] ExcelParse(string path)
         {
-            XLWorkbook workbook = new XLWorkbook(path);
-            IXLWorksheet worksheet = workbook.Worksheet(1);
-            int rc = worksheet.RangeUsed().RowCount();
-            int cc = worksheet.RangeUsed().Row(1).CellCount();
-            string[,] buff = new string[rc, cc];
-            for (int i = 0; i < rc; i++)
+            using (ClosedXML.Excel.XLWorkbook workbook = new ClosedXML.Excel.XLWorkbook(path))
             {
-                IXLRow row = worksheet.Row(i+1);
-                for (int j = 0; j < cc; j++)
+                ClosedXML.Excel.IXLWorksheet worksheet = workbook.Worksheet(1);
+                int rc = worksheet.RangeUsed().RowCount();
+                int cc = worksheet.RangeUsed().Row(1).CellCount();
+                string[,] buff = new string[rc, cc];
+                for (int i = 0; i < rc; i++)
                 {
-                    IXLCell cell = row.Cell(j+1);
-                    string value = cell.GetValue<string>();
-                    buff[i, j] = value;
+                    ClosedXML.Excel.IXLRow row = worksheet.Row(i + 1);
+                    for (int j = 0; j < cc; j++)
+                    {
+                        ClosedXML.Excel.IXLCell cell = row.Cell(j + 1);
+                        string value = cell.GetValue<string>();
+                        buff[i, j] = value;
+                    }
                 }
+
+                return buff;
             }
-            //object value1 = cell.Value;
-            // or
-            return buff;
         }
 
         // получаем партию и отделяем её от списка всех партий
@@ -241,25 +225,28 @@ namespace KrasTsvetMetTest
         {
             try
             {
-                var workbook = new XLWorkbook();
-                workbook.AddWorksheet("Расписание");
-                var ws = workbook.Worksheet("Расписание");
-                int row = 1;
-                foreach (var c in raspisanie)
+                using (ClosedXML.Excel.XLWorkbook workbook = new ClosedXML.Excel.XLWorkbook())
                 {
-                    ws.Cell("A" + row.ToString()).Value = c.party;
-                    ws.Cell("B" + row.ToString()).Value = c.equipment;
-                    ws.Cell("C" + row.ToString()).Value = c.tStart;
-                    ws.Cell("D" + row.ToString()).Value = c.tStop;
-                    row++;
+                    workbook.AddWorksheet("Расписание");
+                    var ws = workbook.Worksheet("Расписание");
+                    int row = 1;
+                    foreach (var c in raspisanie)
+                    {
+                        ws.Cell("A" + row.ToString()).Value = c.Party;
+                        ws.Cell("B" + row.ToString()).Value = c.Equipment;
+                        ws.Cell("C" + row.ToString()).Value = c.TStart;
+                        ws.Cell("D" + row.ToString()).Value = c.TStop;
+                        row++;
 
+                    }
+
+                    string fileName = folderPath + "\\" + "Raspisanie.xlsx";
+                    workbook.SaveAs(fileName);
+
+                    MessageBox.Show("Файл успешно сохранён в папке с исходными файлами" +
+                        "\n " + fileName, "Информация",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                string fileName = folderPath + "\\" + "Raspisanie.xlsx";
-                workbook.SaveAs(fileName);
-                MessageBox.Show("Файл успешно сохранён в папке с исходными файлами" +
-                    "\n " + fileName, "Информация",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch
             {
@@ -281,20 +268,5 @@ namespace KrasTsvetMetTest
         {
             ExportToExcel();
         }
-    }
-
-    class Raspisanie
-    {
-        public Raspisanie(string party, string equipment, string tStart, string tStop)
-        {
-            this.party = party;
-            this.equipment = equipment;
-            this.tStart = tStart;
-            this.tStop = tStop;
-        }
-        public string party { get; set; }
-        public string equipment { get; set; }
-        public string tStart { get; set; }
-        public string tStop { get; set; }
     }
 }

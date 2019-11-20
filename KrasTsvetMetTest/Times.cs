@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace KrasTsvetMetTest
 {
@@ -20,9 +15,9 @@ namespace KrasTsvetMetTest
             this.operation_time = operation_time;
         }
 
-        public static List<Times> TParse(string[,] times)
+        public static ObservableCollection<Times> TParse(string[,] times)
         {
-            var buff = new List<Times>();
+            var buff = new ObservableCollection<Times>();
             for (int i = 1; i < times.GetLength(0); i++)
             {
                 string mti, ni, ot;

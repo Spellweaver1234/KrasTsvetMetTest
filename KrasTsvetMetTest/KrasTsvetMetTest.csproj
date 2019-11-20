@@ -93,9 +93,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ApplicationViewModel.cs" />
+    <Compile Include="DefaultDialogService.cs" />
+    <Compile Include="ExcelFileService.cs" />
+    <Compile Include="IDialogService.cs" />
+    <Compile Include="IFileService.cs" />
     <Compile Include="Machine_tools.cs" />
     <Compile Include="Nomenclatures.cs" />
     <Compile Include="Parties.cs" />
+    <Compile Include="Raspisanie.cs" />
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="Times.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,9 +18,9 @@ namespace KrasTsvetMetTest
             this.nomenclature_id = nomenclature_id;
         }
 
-        public static List<Parties> PParse(string[,] parties)
+        public static ObservableCollection<Parties> PParse(string[,] parties)
         {
-            var buff = new List<Parties>();
+            var buff = new ObservableCollection<Parties>();
             for (int i = 1; i < parties.GetLength(0); i++)      // со 2ой строчки так как первая - шапка таблицы
             {
                 string id, nomenclature_id;

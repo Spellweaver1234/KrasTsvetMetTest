@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace KrasTsvetMetTest
 {
@@ -17,9 +13,9 @@ namespace KrasTsvetMetTest
             this.nomenclature = nomenclature;
         }
 
-        public static List<Nomenclatures> NParse(string[,] nomenclatures)
+        public static ObservableCollection<Nomenclatures> NParse(string[,] nomenclatures)
         {
-            var buff = new List<Nomenclatures>();
+            var buff = new ObservableCollection<Nomenclatures>();
             for (int i = 1; i < nomenclatures.GetLength(0); i++)
             {
                 string id, nomenclature;
