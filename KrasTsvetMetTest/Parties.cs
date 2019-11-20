@@ -1,26 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace KrasTsvetMetTest
 {
-    class Parties
+    public class Parties
     {
-        public string id { get; set; }
-        public string nomenclature_id { get; set; }
+        public string Id { get; set; }
+        public string Nomenclature_id { get; set; }
 
         public Parties(string id, string nomenclature_id)
         {
-            this.id = id;
-            this.nomenclature_id = nomenclature_id;
+            this.Id = id;
+            this.Nomenclature_id = nomenclature_id;
         }
 
         public static ObservableCollection<Parties> PParse(string[,] parties)
         {
-            var buff = new ObservableCollection<Parties>();
+            ObservableCollection<Parties> buff = new ObservableCollection<Parties>();
             for (int i = 1; i < parties.GetLength(0); i++)      // со 2ой строчки так как первая - шапка таблицы
             {
                 string id, nomenclature_id;

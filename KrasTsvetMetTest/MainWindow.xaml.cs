@@ -75,7 +75,7 @@ namespace KrasTsvetMetTest
                     // выбираем для номенклатуры машину
                     Machine_tools current_machine = GetMachine(current_nomenclature, machine_Tools, times);
 
-                    string partyName = current_nomenclature.nomenclature;
+                    string partyName = current_nomenclature.Nomenclature;
                     string equipmentName = current_machine.name;
                     string tStart = current_machine.time.ToString();
                     string tStop = СalculationTime(current_machine, current_nomenclature, times);
@@ -127,9 +127,9 @@ namespace KrasTsvetMetTest
                 string nomenclature = "";
                 foreach (var name in nomenclatures)             // перебор номенклатур
                 {
-                    if (item.nomenclature_id == name.id)        // если совпадает
+                    if (item.Nomenclature_id == name.Id)        // если совпадает
                     {
-                        nomenclature = name.id;               // ид
+                        nomenclature = name.Id;               // ид
                         newparties.Remove(item);           // удаяем из общего списка партий
                         return item;
                     }
@@ -143,7 +143,7 @@ namespace KrasTsvetMetTest
         {
             foreach (var item in nomenclatures)
             {
-                if (item.id == parties.nomenclature_id)
+                if (item.Id == parties.Nomenclature_id)
                 {
                     return item;
                 }
@@ -158,7 +158,7 @@ namespace KrasTsvetMetTest
             List<string> posMachines = new List<string>();
             foreach (var item in times)
             {
-                if (nomenclatures.id == item.nomenclature_id)
+                if (nomenclatures.Id == item.nomenclature_id)
                 {
                     posMachines.Add(item.machine_tool_id);
                 }
@@ -195,7 +195,7 @@ namespace KrasTsvetMetTest
             for (int i = 0; i < times.Count; i++)
             {
                 // совпадение по ид машины и номенклатуры
-                if (times[i].machine_tool_id == machine.id && times[i].nomenclature_id == item.id)
+                if (times[i].machine_tool_id == machine.id && times[i].nomenclature_id == item.Id)
                 {
                     // перебор машин
                     for (int k = 0; k < machine_Tools.Count; k++)

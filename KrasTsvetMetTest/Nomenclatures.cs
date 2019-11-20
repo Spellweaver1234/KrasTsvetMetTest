@@ -4,13 +4,13 @@ namespace KrasTsvetMetTest
 {
     class Nomenclatures
     {
-        public string id { get; set; }
-        public string nomenclature { get; set; }
+        public string Id { get; set; }
+        public string Nomenclature { get; set; }
 
         public Nomenclatures(string id, string nomenclature)
         {
-            this.id = id;
-            this.nomenclature = nomenclature;
+            this.Id = id;
+            this.Nomenclature = nomenclature;
         }
 
         public static ObservableCollection<Nomenclatures> NParse(string[,] nomenclatures)
@@ -23,7 +23,7 @@ namespace KrasTsvetMetTest
                 {
                     id = nomenclatures[i, j];
                     nomenclature = nomenclatures[i, j + 1];
-                    buff.Add(new Nomenclatures(id, nomenclature));
+                    buff.Add(new Nomenclatures (id, nomenclature ));
                 }
             }
             return buff;
