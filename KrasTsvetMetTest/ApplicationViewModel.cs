@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KrasTsvetMetTest
 {
@@ -27,10 +24,6 @@ namespace KrasTsvetMetTest
         {
             this.dialogService = dialogService;
             this.fileService = fileService;
-            //Power = new ObservableCollection<KeyValuePair<double, double>>();
-            //Power.Add(new KeyValuePair<double, double>(1, 29));
-            //Power.Add(new KeyValuePair<double, double>(2, 22));
-            //Power.Add(new KeyValuePair<double, double>(3, 25));
 
             party = new ObservableCollection<Parties>();
             nomenclatures = new ObservableCollection<Nomenclatures>();
@@ -98,7 +91,6 @@ namespace KrasTsvetMetTest
                       try
                       {
                           Distribution();
-                          //LoadBarChartData();
                           dialogService.ShowMessage("Распределение выполнено!");
                       }
                       catch (Exception ex)
@@ -257,18 +249,6 @@ namespace KrasTsvetMetTest
                 }
             }
             return null;
-        }
-
-        private void LoadBarChartData()
-        {
-            Power.Add(new KeyValuePair<double, double>(1, 29));
-            Power.Add(new KeyValuePair<double, double>(2, 22));
-            Power.Add(new KeyValuePair<double, double>(3, 25));
-            //((PieSeries)mcChart.Series[0]).ItemsSource =
-            //    new KeyValuePair<string, int>[] {
-            //    new KeyValuePair<string,int>("Печь 1", machine_Tools[0].time),
-            //    new KeyValuePair<string,int>("Печь 2", machine_Tools[1].time),
-            //    new KeyValuePair<string,int>("Печь 3", machine_Tools[2].time)};
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

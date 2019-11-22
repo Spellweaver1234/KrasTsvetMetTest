@@ -20,17 +20,6 @@ namespace KrasTsvetMetTest
             }
         }
 
-        //public bool OpenFileDialog()
-        //{
-        //    OpenFileDialog openFileDialog = new OpenFileDialog();
-        //    if (openFileDialog.ShowDialog() == true)
-        //    {
-        //        FilePath = openFileDialog.FileName;
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
         public bool SaveFileDialog()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
